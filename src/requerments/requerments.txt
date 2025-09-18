@@ -1,0 +1,48 @@
+Iteration 1:
+1. User authorization
+2. Creation of a user by the admin
+3. User can create an account
+Iteration 2:
+1. Deposit of money by the user
+2. Transfer money from one account to another
+3. Changing the user name
+
+Detailed API requirements:
+User
+Username:
+• Username cannot be blank
+• Username must be between 3 and 15 characters
+• Username must contain only letters, digits, dashes, underscores, and dots
+Password:
+• Password cannot be blank
+• Password must be at least 8 characters long
+• Password must contain at least one digit, one lower case, one upper case, one
+special character, and no spaces
+Role:
+• Role must be either 'ADMIN' or 'USER'
+
+
+API Development
+Launching the API:
+The application's backend is packaged in docker. To run the application, you need to:
+1. Download docker image: docker pull nobugsme/nbank:latest
+docker pull nobugsme/nbank:with_validation_fix
+2. Run the docker container: docker run -d -p 4111:4111 --name nbank nobugsme/nbank:latest
+3. Swagger is available at: http: //localhost: 4111/swagger-ui/index.html
+
+API Requirements:
+Administrator's details: admin admin
+
+The application uses basic authentication
+By roles: Admin:
+1. Admin can create users
+2. The admin can see the list of users
+By role: User:
+1. The user can log in and receive a token
+2. An authorized user can see their accounts
+3. An authorized user can create a new account.
+4. An authorized user can add funds to their account.
+5. An authorized user can transfer money from one account to another
+6. An authorized user can see the transactions of their accounts
+7. An authorized user can change their profile name.
+
