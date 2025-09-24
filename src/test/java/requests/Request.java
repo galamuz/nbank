@@ -31,6 +31,12 @@ public class Request<T extends BaseModel> {
                 .then().assertThat()
                 .spec(responseSpec);
     }
+    public ValidatableResponse get(long id){
+        return  given().spec(requestSpec)
+                .get(String.format(endpoint.getUrl(), id))
+                .then().assertThat()
+                .spec(responseSpec);
+    }
     public ValidatableResponse get(){
         return  given().spec(requestSpec)
                 .get(endpoint.getUrl())

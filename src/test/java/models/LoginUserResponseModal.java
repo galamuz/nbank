@@ -10,7 +10,7 @@ import lombok.NonNull;
 @Data
 @NonNull
 
-public class LoginUserResponceModal extends BaseModel{
+public class LoginUserResponseModal extends BaseModel{
     private String username;
     private String role;
 }

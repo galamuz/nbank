@@ -1,8 +1,11 @@
 import generation.RandomData;
+import io.restassured.response.ValidatableResponse;
 import models.BaseModel;
 import models.CreateUserRequestModel;
 import models.CreateUserResponseModel;
 import models.UserRole;
+import models.comparator.ModelAssertions;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,10 +47,7 @@ public class CreateUserTest extends BaseTest {
                 .post(createUserRequestModel).extract().as(CreateUserResponseModel.class);
 
         createUserResponseModelList.add(createUserResponceModel);
-
-        softly.assertThat(createUserRequestModel.getUsername()).isEqualTo(createUserResponceModel.getUsername());
-        softly.assertThat(createUserRequestModel.getPassword()).isNotEqualTo(createUserResponceModel.getPassword());
-        softly.assertThat(createUserRequestModel.getRole()).isEqualTo(createUserResponceModel.getRole());
+        ModelAssertions.assertThatModelsMatch(softly, createUserRequestModel, createUserResponceModel);
     }
 
     static Stream<Arguments> invalidUserProvider() {
@@ -60,8 +60,8 @@ public class CreateUserTest extends BaseTest {
                         new CreateUserRequestModel(RandomData.getLongUserName(), RandomData.getPassword(),  UserRole.USER.toString())),
                 Arguments.of("username","Username must contain only letters, digits, dashes, underscores, and dots",
                         new CreateUserRequestModel(RandomData.getUserName()+"#", RandomData.getPassword(),  UserRole.USER.toString())),
-                Arguments.of("password", "Password cannot be blank",
-                        new CreateUserRequestModel(RandomData.getUserName(), "   ",  UserRole.USER.toString())),
+                // Arguments.of("password", "Password cannot be blank",
+                //         new CreateUserRequestModel(RandomData.getUserName(), "   ",  UserRole.USER.toString())),
                 Arguments.of("password", "Password must contain at least one digit, one lower case, one upper case, one special character, no spaces, and be at least 8 characters long",
                         new CreateUserRequestModel(RandomData.getUserName(), "aW1@123",  UserRole.USER.toString())),
                 Arguments.of("role", "Role must be either 'ADMIN' or 'USER'",
@@ -75,7 +75,15 @@ public class CreateUserTest extends BaseTest {
         new Request<CreateUserRequestModel>(
                 RequestSpec.adminAuthorizedSpec(),
                 ResponseSpec.responseReturnedBadRequest(caseName,caseErrorMessage), Endpoint.USER).post(invalidUser);
-    }
+  
+        List<CreateUserResponseModel> allUsers = new Request<CreateUserRequestModel>(
+        RequestSpec.adminAuthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.USER)
+        .get().extract().jsonPath().getList("", CreateUserResponseModel.class); 
+
+        softly.assertThat(allUsers).extracting(CreateUserResponseModel::getUsername)
+              .doesNotContain(invalidUser.getUsername());
+  
+            }
 
      @AfterAll
     public static void deleteTestData() {

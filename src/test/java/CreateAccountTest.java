@@ -32,9 +32,6 @@ public class CreateAccountTest extends BaseTest {
                 .username(createUserRequestModel.getUsername())
                 .password(createUserRequestModel.getPassword()).build();
 
-
-         // TODO - check that userName is uniq?
-
          // create user
         CreateUserResponseModel createUserResponceModel = new Request<CreateUserRequestModel>(RequestSpec.adminAuthorizedSpec(), ResponseSpec.entityWasCreated(), Endpoint.USER)
                 .post(createUserRequestModel).extract().as(CreateUserResponseModel.class);
@@ -42,12 +39,17 @@ public class CreateAccountTest extends BaseTest {
         createUserResponseModelList.add(createUserResponceModel);
 
         // create account
-        CreateAccountResponceModel accountResponceModel=   new Request<BaseModel>(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(),userLoginRequestModel.getPassword()), ResponseSpec.entityWasCreated(),Endpoint.ACCOUNTS)
-                     .post(null).extract().as(CreateAccountResponceModel.class);
-
+        CreateAccountResponseModel accountResponceModel=   new Request<BaseModel>(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(),userLoginRequestModel.getPassword()), ResponseSpec.entityWasCreated(),Endpoint.ACCOUNTS)
+                     .post(null).extract().as(CreateAccountResponseModel.class);
 
         softly.assertThat(accountResponceModel.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(accountResponceModel.getId()).isNotNull();
+
+      
+        // check that account was created
+          new Request<BaseModel>(
+            RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
+            ResponseSpec.responseIsOk(),Endpoint.ACCOUNTS_TRANSACTIONS).get(accountResponceModel.getId());
 
     }
     //Negative: POST -  Unathorized user can not create account

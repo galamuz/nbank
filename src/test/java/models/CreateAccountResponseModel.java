@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @NonNull
 @NoArgsConstructor
-public class CreateAccountResponceModel extends BaseModel{
+public class CreateAccountResponseModel extends BaseModel{
 
     private long id;
     private String accountNumber;

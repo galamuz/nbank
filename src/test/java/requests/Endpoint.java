@@ -17,15 +17,21 @@ public enum Endpoint {
     ACCOUNTS(
             Constants.ACCOUNT_URL,
             BaseModel.class,
-            CreateAccountResponceModel.class
+            CreateAccountResponseModel.class
     ),
     LOGIN(
             Constants.LOGIN_URL,
             LoginUserRequestModel.class,
-            LoginUserResponceModal.class
-    );
+            LoginUserResponseModal.class
+    ),
+    ACCOUNTS_TRANSACTIONS(
+        Constants.ACCOUNT_URL + "/%s"+Constants.TRANSACTION_URL,
+        BaseModel.class,
+        BaseModel.class
+);
 
     private final String url;
     private final Class<? extends BaseModel> requestModel;
     private final Class<? extends BaseModel> responceModel;
+    
 }

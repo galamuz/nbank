@@ -8,4 +8,5 @@ public class Constants {
     public static final String USERS_URL = "/api/v1/admin/users";
     public static final String ACCOUNT_URL = "/api/v1/accounts";
     public static final String HEADER_AUTH ="Authorization";
+    public static final String TRANSACTION_URL ="/transactions";
 }
