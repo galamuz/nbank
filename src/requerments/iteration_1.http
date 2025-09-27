@@ -1,0 +1,117 @@
+### Positive: POST -  User can be authorize with correct data
+POST http://localhost:4111/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "kate1998sdfsd",
+  "password": "verysTRongPasword33$"
+}
+
+### Negative: POST User cannot be authorise with wrong password
+POST http://localhost:4111/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin_admin"
+}
+
+### Positive: POST -  Admin can create user with correct data
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "kate19f23sd",
+  "password": "verysTRongPasword33$",
+  "role": "USER"
+}
+
+### Negative: POST -  Admin cannot create user with blank Username
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "  ",
+  "password": "verysTRongPasword33$",
+  "role": "USER"
+}
+
+### Negative: POST -  Admin cannot create user  username less than 3 characters
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "qw",
+  "password": "verysTRongPasword33$",
+  "role": "USER"
+}
+
+### Negative: POST -  Admin cannot create user  username more than 15 characters
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "1234567890123456",
+  "password": "verysTRongPasword33$",
+  "role": "USER"
+}
+
+### Negative: POST -  Admin cannot create user with username contains special characters
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "123456789$#3456",
+  "password": "verysTRongPasword33$",
+  "role": "USER"
+}
+### Negative: POST -  Admin cannot create user with password without at least one digit, one lower case, one upper case, one
+#special character, and no spaces
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "1234567456",
+  "password": "  ",
+  "role": "USER"
+}
+
+### Negative: POST -  Admin cannot create user with password less than 8 characters long
+
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "123456783456",
+  "password": "aW1@123",
+  "role": "USER"
+}
+
+### Negative: POST -  Admin can create user with unexpected role
+POST http://localhost:4111/api/v1/admin/users
+Content-Type: application/json
+Authorization: Basic YWRtaW46YWRtaW4=
+
+{
+  "username": "kate1998sdfsd",
+  "password": "verysTRongPasword33$",
+  "role": "MANAGER"
+}
+
+### Psitive: POST -  User can create account
+POST http://localhost:4111/api/v1/accounts
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+
+### Negative: POST -  User can not create account without authorization
+POST http://localhost:4111/api/v1/accounts
+Content-Type: application/json
+
+
