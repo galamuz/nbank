@@ -7,6 +7,8 @@ import requests.Endpoint;
 import requests.Request;
 import requests.specs.RequestSpec;
 import requests.specs.ResponseSpec;
+import requests.steps.AdminSteps;
+import requests.steps.UserSteps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,19 +35,17 @@ public class CreateAccountTest extends BaseTest {
                 .password(createUserRequestModel.getPassword()).build();
 
          // create user
-        CreateUserResponseModel createUserResponceModel = new Request<CreateUserRequestModel>(RequestSpec.adminAuthorizedSpec(), ResponseSpec.entityWasCreated(), Endpoint.USER)
-                .post(createUserRequestModel).extract().as(CreateUserResponseModel.class);
+        CreateUserResponseModel createUser = AdminSteps.createUser(createUserRequestModel);
+        softly.assertThat(createUser.getId()).isNotNull().isNotNegative();
 
-        createUserResponseModelList.add(createUserResponceModel);
+        createUserResponseModelList.add(createUser);
 
         // create account
-        CreateAccountResponseModel accountResponceModel=   new Request<BaseModel>(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(),userLoginRequestModel.getPassword()), ResponseSpec.entityWasCreated(),Endpoint.ACCOUNTS)
-                     .post(null).extract().as(CreateAccountResponseModel.class);
+        CreateAccountResponseModel accountResponceModel= UserSteps.createAccount(userLoginRequestModel);
 
         softly.assertThat(accountResponceModel.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(accountResponceModel.getId()).isNotNull();
 
-      
         // check that account was created
           new Request<BaseModel>(
             RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
@@ -63,12 +63,8 @@ public class CreateAccountTest extends BaseTest {
     }
     @AfterAll
     public static void deleteTestData() {
-
         for(CreateUserResponseModel user : createUserResponseModelList) {
-            new Request<BaseModel>(
-                    RequestSpec.adminAuthorizedSpec(),
-                    ResponseSpec.entityWasDeleted(), Endpoint.USER).delete(user.getId());
-
+            AdminSteps.deleteUser(user);
         }
 
     }
