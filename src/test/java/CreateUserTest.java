@@ -74,9 +74,7 @@ public class CreateUserTest extends BaseTest {
                 RequestSpec.adminAuthorizedSpec(),
                 ResponseSpec.responseReturnedBadRequest(caseName, caseErrorMessage), Endpoint.USER).post(invalidUser);
 
-        List<CreateUserResponseModel> allUsers = new Request(
-                RequestSpec.adminAuthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.USER)
-                .getAll().extract().jsonPath().getList("", CreateUserResponseModel.class);
+        List<CreateUserResponseModel> allUsers = AdminSteps.getAllUsers();
 
         softly.assertThat(allUsers).extracting(CreateUserResponseModel::getUsername)
                 .doesNotContain(invalidUser.getUsername());

@@ -41,17 +41,16 @@ public class CreateAccountTest extends BaseTest {
         createUserResponseModelList.add(createUser);
 
         // create account
-        CreateAccountResponseModel accountResponceModel= UserSteps.createAccount(userLoginRequestModel);
+        CreateAccountResponseModel accountResponseModel= UserSteps.createAccount(userLoginRequestModel);
 
-        softly.assertThat(accountResponceModel.getAccountNumber()).isNotNull().isNotEmpty();
-        softly.assertThat(accountResponceModel.getId()).isNotNull();
+        softly.assertThat(accountResponseModel.getAccountNumber()).isNotNull().isNotEmpty();
+        softly.assertThat(accountResponseModel.getId()).isNotNull();
 
         // check that account was created
-          new Request(
-            RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
-            ResponseSpec.responseIsOk(),Endpoint.ACCOUNTS_TRANSACTIONS).get(accountResponceModel.getId());
+        UserSteps.getUserAccountTransaction(userLoginRequestModel,accountResponseModel);
 
     }
+
     //Negative: POST -  Unathorized user can not create account
     @Test
     public void userCanNotCreateAccountWithoutAuthentication(){

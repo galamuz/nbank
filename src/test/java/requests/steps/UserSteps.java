@@ -19,6 +19,15 @@ public class UserSteps {
                 .post(userLoginRequestModel);
 
     }
+    public static ValidatableResponse unauthLogin(LoginUserRequestModel userLoginRequestModel) {
+     return new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(), Endpoint.LOGIN)
+            .post(userLoginRequestModel);
+    }
 
+    public static ValidatableResponse getUserAccountTransaction(LoginUserRequestModel userLoginRequestModel, CreateAccountResponseModel accountResponseModel){
+        return new Request(
+                RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
+                ResponseSpec.responseIsOk(),Endpoint.ACCOUNTS_TRANSACTIONS).get(accountResponseModel.getId());
+    }
 
 }
