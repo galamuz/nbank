@@ -47,7 +47,7 @@ public class CreateAccountTest extends BaseTest {
         softly.assertThat(accountResponceModel.getId()).isNotNull();
 
         // check that account was created
-          new Request<BaseModel>(
+          new Request(
             RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
             ResponseSpec.responseIsOk(),Endpoint.ACCOUNTS_TRANSACTIONS).get(accountResponceModel.getId());
 
@@ -57,7 +57,7 @@ public class CreateAccountTest extends BaseTest {
     public void userCanNotCreateAccountWithoutAuthentication(){
 
         // create account
-         new Request<BaseModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(),Endpoint.ACCOUNTS)
+         new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(),Endpoint.ACCOUNTS)
                 .post(null);
 
     }

@@ -70,7 +70,7 @@ public class LoginUserTest extends BaseTest {
         createUserResponseModelList.add(createUserResponseModel);
         userLoginRequestModel.setPassword("");
 
-        new Request<LoginUserRequestModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(), Endpoint.LOGIN)
+        new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(), Endpoint.LOGIN)
                 .post(userLoginRequestModel);
     }
 

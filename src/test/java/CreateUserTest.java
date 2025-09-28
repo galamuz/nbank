@@ -50,16 +50,16 @@ public class CreateUserTest extends BaseTest {
 
     static Stream<Arguments> invalidUserProvider() {
         return Stream.of(
-//                Arguments.of("username","Username cannot be blank",
-//                        new CreateUserRequestModel("    ", RandomData.getPassword(), UserRole.USER.toString())),
+                Arguments.of("username","Username cannot be blank",
+                        new CreateUserRequestModel("    ", RandomData.getPassword(), UserRole.USER.toString())),
                 Arguments.of("username", "Username must be between 3 and 15 characters",
                         new CreateUserRequestModel(RandomData.getShortUserName(), RandomData.getPassword(), UserRole.USER.toString())),
                 Arguments.of("username", "Username must be between 3 and 15 characters",
                         new CreateUserRequestModel(RandomData.getLongUserName(), RandomData.getPassword(), UserRole.USER.toString())),
                 Arguments.of("username", "Username must contain only letters, digits, dashes, underscores, and dots",
                         new CreateUserRequestModel(RandomData.getUserName() + "#", RandomData.getPassword(), UserRole.USER.toString())),
-                // Arguments.of("password", "Password cannot be blank",
-                //         new CreateUserRequestModel(RandomData.getUserName(), "   ",  UserRole.USER.toString())),
+                 Arguments.of("password", "Password cannot be blank",
+                         new CreateUserRequestModel(RandomData.getUserName(), "   ",  UserRole.USER.toString())),
                 Arguments.of("password", "Password must contain at least one digit, one lower case, one upper case, one special character, no spaces, and be at least 8 characters long",
                         new CreateUserRequestModel(RandomData.getUserName(), "aW1@123", UserRole.USER.toString())),
                 Arguments.of("role", "Role must be either 'ADMIN' or 'USER'",
@@ -70,11 +70,11 @@ public class CreateUserTest extends BaseTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("invalidUserProvider")
     public void adminCannotCreateUserWithInvalidData(String caseName, String caseErrorMessage, CreateUserRequestModel invalidUser) {
-        new Request<CreateUserRequestModel>(
+        new Request(
                 RequestSpec.adminAuthorizedSpec(),
                 ResponseSpec.responseReturnedBadRequest(caseName, caseErrorMessage), Endpoint.USER).post(invalidUser);
 
-        List<CreateUserResponseModel> allUsers = new Request<CreateUserRequestModel>(
+        List<CreateUserResponseModel> allUsers = new Request(
                 RequestSpec.adminAuthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.USER)
                 .getAll().extract().jsonPath().getList("", CreateUserResponseModel.class);
 

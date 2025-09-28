@@ -32,9 +32,9 @@ public class RequestSpec {
 
         LoginUserRequestModel userLoginRequestModel = LoginUserRequestModel.builder().username(userName).password(password).build();
 
-        String userAuthHeader = new Request<LoginUserRequestModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.LOGIN)
-                .post(userLoginRequestModel).extract().header("Authorization");
+        String userAuthHeader = new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.LOGIN)
+                .post(userLoginRequestModel).extract().header(Constants.HEADER_AUTH);
 
-        return defaultRequestSpecBuilder().addHeader("Authorization",userAuthHeader).build();
+        return defaultRequestSpecBuilder().addHeader(Constants.HEADER_AUTH,userAuthHeader).build();
     }
 }
