@@ -1,11 +1,7 @@
-import generation.RandomData;
+import generation.EntityGenerator;
 import models.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
-import requests.Endpoint;
-import requests.Request;
-import requests.specs.RequestSpec;
-import requests.specs.ResponseSpec;
 import requests.steps.AdminSteps;
 import requests.steps.UserSteps;
 import utils.Constants;
@@ -26,14 +22,8 @@ public class LoginUserTest extends BaseTest {
 
     @BeforeEach
     public void generateTestData() {
-        createUserRequestModel = CreateUserRequestModel.builder()
-                .username(RandomData.getUserName())
-                .password(RandomData.getPassword())
-                .role(UserRole.USER.toString())
-                .build();
-
-
-        userLoginRequestModel = LoginUserRequestModel.builder()
+        createUserRequestModel = EntityGenerator.generate(CreateUserRequestModel.class);
+         userLoginRequestModel = LoginUserRequestModel.builder()
                 .username(createUserRequestModel.getUsername())
                 .password(createUserRequestModel.getPassword())
                 .build();

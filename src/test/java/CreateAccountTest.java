@@ -1,4 +1,4 @@
-import generation.RandomData;
+import generation.EntityGenerator;
 import models.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,11 +24,7 @@ public class CreateAccountTest extends BaseTest {
     //Positive: POST -  User can create account
     @Test
      public void userCanCreateAccount(){
-         CreateUserRequestModel createUserRequestModel = CreateUserRequestModel.builder()
-                 .username(RandomData.getUserName())
-                 .password(RandomData.getPassword())
-                 .role(UserRole.USER.toString())
-                 .build();
+         CreateUserRequestModel createUserRequestModel = EntityGenerator.generate(CreateUserRequestModel.class);
 
         LoginUserRequestModel userLoginRequestModel = LoginUserRequestModel.builder()
                 .username(createUserRequestModel.getUsername())
