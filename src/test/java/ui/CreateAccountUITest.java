@@ -8,85 +8,74 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import common.annotation.UserSession;
+import common.extention.AdminSessionExtension;
+import common.storage.SessionStorage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import ui.pages.DepositPage;
+import ui.pages.TransferPage;
 import ui.pages.UserDashboardPage;
 import utils.Constants;
 import java.time.Duration;
-import java.util.List;
+import java.util.Random;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static com.codeborne.selenide.Selenide.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class CreateAccountUITest extends BaseUITest {
-    private static CreateUserRequestModel user;
-    private static LoginUserRequestModel loginUser;
-    private static List<CreateUserResponseModel> createUserResponseModelList;
 
-    @BeforeEach
-    public void setTestData() {
-
-        user = EntityGenerator.generate(CreateUserRequestModel.class);
-        loginUser = LoginUserRequestModel.builder()
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .build();
-    }
     @Test
+    @UserSession
     public void userCanCreateAccount(){
 
-        // create user
-        AdminSteps.createUser(user);
-        //login user
-        authAsUser(loginUser);
         //create account
         new UserDashboardPage().open().createAccount();
 
         // api - account created
-        CreateAccountResponseModel createAccount = UserSteps.getAccounts(loginUser).get(0);
+        CreateAccountResponseModel createAccount = SessionStorage.getSteps().getAccounts().get(0);
         assertThat(createAccount).isNotNull();
 
         // check alert
         new UserDashboardPage().checkAlertMessageAndAccept(UIAlerts.ACCOUNT_CREATED);
     }
     @Test
+    @UserSession
     public void userCanAddFundsToAccount() {
-        // create user
-        AdminSteps.createUser(user);
-        //login user
-        authAsUser(loginUser);
 
-        //create account
-        CreateAccountResponseModel account = UserSteps.createAccount(loginUser);
+        CreateAccountResponseModel account = SessionStorage.getSteps().createAccount();
+        int amount = new Random().nextInt(1000);
 
-        Selenide.open(Constants.USER_UI_URL);
-        $(Selectors.byText("\uD83D\uDCB0 Deposit Money")).click();
-
-        SelenideElement select = $("select").shouldBe(Condition.visible, Duration.ofSeconds(10));
-        select.selectOptionByValue(String.valueOf(account.getId()));
-
-        $(Selectors.byAttribute("placeholder","Enter amount")).setValue("100");
-        $(Selectors.byText("\uD83D\uDCB5 Deposit")).click();
+        new UserDashboardPage().open().createDeposit().getPage(DepositPage.class)
+                .makeDeposit(account.getId(),amount).checkAlertMessageAndAccept(UIAlerts.DEPOSIT_CREATED);
 
         // check transaction
-        CreateTransactionResponseModel transaction = UserSteps.getUserAccountTransaction(loginUser,account.getId()).get(0);;
+        CreateTransactionResponseModel transaction =  SessionStorage.getSteps().getUserAccountTransaction(account.getId()).get(0);;
         assertThat(transaction).isNotNull();
     }
 
     @Test
+    @UserSession
     public void userCanMakeTransferBetweenAccount() {
-        // create user
-        AdminSteps.createUser(user);
-
-        //login user
-        authAsUser(loginUser);
 
         //create account
-        CreateAccountResponseModel account_1= UserSteps.createAccount(loginUser);
-        CreateAccountResponseModel account_2= UserSteps.createAccount(loginUser);
+        CreateAccountResponseModel account=  SessionStorage.getSteps().createAccount();
+        CreateTransactionRequestModel transaction = EntityGenerator.generate(CreateTransactionRequestModel.class);
+        transaction.setId(account.getId());
 
-        //Selenide.open(Constants.TRANSFER);
+        SessionStorage.getSteps().createTransaction(transaction);
+        CreateAccountResponseModel accountSecond=  SessionStorage.getSteps().createAccount();
 
+        new UserDashboardPage().open().createTransfer().getPage(TransferPage.class)
+                .makeDeposit(account.getId(),transaction.getBalance(),SessionStorage.getUser().getUsername(),accountSecond.getAccountNumber())
+                .checkAlertMessageAndAccept(UIAlerts.TRANSFER_CREATAD);
+
+        // check transaction
+        CreateTransactionResponseModel transactionSecond =  SessionStorage.getSteps().getUserAccountTransaction(accountSecond.getId()).get(0);;
+        assertThat(transactionSecond).isNotNull();
+        assertThat(transactionSecond.getAmount()).isEqualTo(transaction.getBalance());
     }
 
 }

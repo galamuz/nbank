@@ -11,53 +11,64 @@ import api.requests.specs.ResponseSpec;
 import java.util.List;
 
 public class UserSteps {
-    public static CreateAccountResponseModel createAccount(LoginUserRequestModel userLoginRequestModel) {
+    private final LoginUserRequestModel userLoginRequest;
 
-        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()), ResponseSpec.entityWasCreated(), Endpoint.ACCOUNTS)
+    public UserSteps(String username, String password){
+
+        userLoginRequest =  LoginUserRequestModel.builder()
+                .username(username)
+                .password(password)
+                .build();
+    }
+    public UserSteps(LoginUserRequestModel login){
+        userLoginRequest =  login;
+    }
+
+    public  CreateAccountResponseModel createAccount() {
+
+        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()), ResponseSpec.entityWasCreated(), Endpoint.ACCOUNTS)
                 .post(null).extract().as(CreateAccountResponseModel.class);
     }
 
-    public static ValidatableResponse login(LoginUserRequestModel userLoginRequestModel) {
+    public  ValidatableResponse login() {
         return new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.LOGIN)
-                .post(userLoginRequestModel);
+                .post(userLoginRequest);
 
     }
-    public static ValidatableResponse unauthLogin(LoginUserRequestModel userLoginRequestModel) {
-     return new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(), Endpoint.LOGIN)
-            .post(userLoginRequestModel);
+    public  ValidatableResponse unauthenticLogin() {
+        return new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(), Endpoint.LOGIN)
+                .post(null);
     }
 
-    public static List<CreateTransactionResponseModel> getUserAccountTransaction(LoginUserRequestModel userLoginRequestModel, long accountId){
+    public  List<CreateTransactionResponseModel> getUserAccountTransaction(long accountId){
         return new Request(
-                RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
+                RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()),
                 ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_TRANSACTIONS).get(accountId).extract().as(new TypeRef<List<CreateTransactionResponseModel>>() {});
     }
 
-    public static List<CreateAccountResponseModel> getAccounts(LoginUserRequestModel userLoginRequestModel) {
+    public  List<CreateAccountResponseModel> getAccounts() {
 
-        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()), ResponseSpec.responseIsOk(), Endpoint.CUSTOMER_ACCOUNT)
+        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()), ResponseSpec.responseIsOk(), Endpoint.CUSTOMER_ACCOUNT)
                 .getAll().extract().as(new TypeRef<List<CreateAccountResponseModel>>() {});
     }
 
-    public static CreateCustomerRequestModel changeName(CreateCustomerNameRequestModel customerNameRequestModel, LoginUserRequestModel userLoginRequestModel,long id){
+    public  CreateCustomerRequestModel changeName(CreateCustomerNameRequestModel customerNameRequestModel, long id){
 
-        return  new Request(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
+        return  new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()),
                 ResponseSpec.responseIsOk(), Endpoint.CUSTOMER_PROFILE)
                 .update(id,customerNameRequestModel).extract().as(CreateCustomerRequestModel.class);
     }
 
-    public static CreateAccountResponseModel createTransaction(LoginUserRequestModel userLoginRequestModel, CreateTransactionRequestModel transactionRequestModel) {
+    public  CreateAccountResponseModel createTransaction( CreateTransactionRequestModel transactionRequestModel) {
 
-        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()), ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_DEPOSIT)
+        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()), ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_DEPOSIT)
                 .post(transactionRequestModel).extract().as(CreateAccountResponseModel.class);
     }
 
-    public static CreateTransferResponseModel createTransfer(LoginUserRequestModel userLoginRequestModel, CreateTransferRequestModel transfer) {
+    public  CreateTransferResponseModel createTransfer( CreateTransferRequestModel transfer) {
 
-        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()), ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_TRANSFER)
+        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()), ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_TRANSFER)
                 .post(transfer).extract().as(CreateTransferResponseModel.class);
     }
-
-
 
 }

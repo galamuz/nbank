@@ -21,7 +21,7 @@ public class Constants {
     public static final String USER_UI_URL ="/dashboard";
     public static final String TRANSFER_UI_URL ="/transfer";
     public static final String ADMIN_UI_URL ="/admin";
-
+    public static final String DEPOSIT_UI_URL ="/deposit";
     //CHROME
     public static final String CHROME_WINDOWS = Configs.getProperty("chromeOptionsWindows");
     public static final String CHROME_DISABLE = Configs.getProperty("chromeOptionsDisable");

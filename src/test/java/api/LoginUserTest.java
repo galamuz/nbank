@@ -39,7 +39,7 @@ public class LoginUserTest extends BaseTest {
         userLoginRequestModel.setPassword(Constants.ADMIN_PASSWORD);
 
         softly.assertThat(
-                UserSteps.login(userLoginRequestModel)
+                new UserSteps(userLoginRequestModel).login()
                         .header(Constants.HEADER_AUTH, Matchers.notNullValue()));
     }
 
@@ -50,8 +50,7 @@ public class LoginUserTest extends BaseTest {
 
         createUserResponseModelList.add(createUserResponseModel);
 
-        softly.assertThat(
-                UserSteps.login(userLoginRequestModel)
+        softly.assertThat( new UserSteps(userLoginRequestModel).login()
                         .header(Constants.HEADER_AUTH, Matchers.notNullValue()));
     }
 
@@ -63,7 +62,7 @@ public class LoginUserTest extends BaseTest {
         createUserResponseModelList.add(createUserResponseModel);
         userLoginRequestModel.setPassword("");
 
-        UserSteps.unauthLogin(userLoginRequestModel);
+        new UserSteps(userLoginRequestModel).unauthenticLogin();
     }
 
     @AfterAll

@@ -3,34 +3,24 @@ package ui;
 import api.generation.EntityGenerator;
 import api.models.CreateUserRequestModel;
 import api.models.CreateUserResponseModel;
-import api.models.LoginUserRequestModel;
 import api.requests.steps.AdminSteps;
 import com.codeborne.selenide.Condition;
-import org.junit.jupiter.api.BeforeEach;
+import common.annotation.AdminSession;
+import common.extention.AdminSessionExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import ui.pages.AdminPanelPage;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(AdminSessionExtension.class)
 public class CreateUserUITest extends BaseUITest {
     private static CreateUserRequestModel user;
-    LoginUserRequestModel loginAdminUser;
-    private static List<CreateUserResponseModel> createUserResponseModelList;
-
-
-    @BeforeEach
-    public void setTestData() {
-             loginAdminUser = LoginUserRequestModel.loginAdmin();
-        user = EntityGenerator.generate(CreateUserRequestModel.class);
-    }
-
 
     @Test
+    @AdminSession
     public void adminCanCreateUserWithCorrectDataTest() {
-        // login admin
-        authAsUser(loginAdminUser);
+        user = EntityGenerator.generate(CreateUserRequestModel.class);
         // create user
         new AdminPanelPage().open().createUser(user.getUsername(),user.getPassword())
                 .checkAlertMessageAndAccept(UIAlerts.USER_CREATED_SUCCESSFULLY)
@@ -42,13 +32,12 @@ public class CreateUserUITest extends BaseUITest {
                 .findFirst()
                 .orElse(null);
 
-        assertThat(createUser).isNotNull();
+      assertThat(createUser).isNotNull();
     }
     @Test
+    @AdminSession
     public void adminCanNotCreateUserWithInvalideDataTest() {
-        // login admin
-        authAsUser(loginAdminUser);
-
+        user = EntityGenerator.generate(CreateUserRequestModel.class);
         user.setUsername("we");
         // create user
         new AdminPanelPage().open().createUser(user.getUsername(),user.getPassword())
@@ -60,8 +49,7 @@ public class CreateUserUITest extends BaseUITest {
                 .findFirst()
                 .orElse(null);
 
-        assertThat(createUser).isNotNull();
-
+       assertThat(createUser).isNull();
     }
 
 }

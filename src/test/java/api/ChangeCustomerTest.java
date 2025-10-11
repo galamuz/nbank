@@ -43,8 +43,9 @@ public class ChangeCustomerTest extends BaseTest {
 
         createUserRequestModel.setUsername(customerNameRequestModel.getName());
         createUser.setName(customerNameRequestModel.getName());
+        UserSteps userSteps = new UserSteps(userLoginRequestModel);
 
-        CreateCustomerRequestModel updateUser = UserSteps.changeName(customerNameRequestModel, userLoginRequestModel, createUser.getId());
+        CreateCustomerRequestModel updateUser = userSteps.changeName(customerNameRequestModel, createUser.getId());
 
         ModelAssertions.assertThatModelsMatch(softly, createUser, updateUser.getCustomer());
         softly.assertThat(updateUser.getMessage()).isEqualTo("Profile updated successfully");
@@ -93,19 +94,20 @@ public class ChangeCustomerTest extends BaseTest {
 
         createUserResponseModelList.add(createUser);
         //create accounts
+        UserSteps userStepsFirstUser = new UserSteps(userLoginRequestModel);
 
-        CreateAccountResponseModel account_1= UserSteps.createAccount(userLoginRequestModel);
+        CreateAccountResponseModel account_1= userStepsFirstUser.createAccount();
 
         softly.assertThat(account_1.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_1.getId()).isNotNull();
 
-        CreateAccountResponseModel account_2= UserSteps.createAccount(userLoginRequestModel);
+        CreateAccountResponseModel account_2= userStepsFirstUser.createAccount();
 
         softly.assertThat(account_2.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_2.getId()).isNotNull();
 
         // check that account was created
-        softly.assertThat(UserSteps.getAccounts(userLoginRequestModel).size()).isEqualTo(2);
+        softly.assertThat(userStepsFirstUser.getAccounts().size()).isEqualTo(2);
 
     }
 

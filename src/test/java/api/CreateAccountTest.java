@@ -40,13 +40,14 @@ public class CreateAccountTest extends BaseTest {
         createUserResponseModelList.add(createUser);
 
         // create account
-        CreateAccountResponseModel accountResponseModel= UserSteps.createAccount(userLoginRequestModel);
+        UserSteps userSteps = new UserSteps(userLoginRequestModel);
+        CreateAccountResponseModel accountResponseModel= userSteps.createAccount();
 
         softly.assertThat(accountResponseModel.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(accountResponseModel.getId()).isNotNull();
 
         // check that account was created
-        softly.assertThat(UserSteps.getAccounts(userLoginRequestModel).get(0)).isNotNull();
+        softly.assertThat(userSteps.getAccounts().get(0)).isNotNull();
 
     }
 

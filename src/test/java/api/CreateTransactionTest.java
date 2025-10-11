@@ -37,21 +37,21 @@ public class CreateTransactionTest extends BaseTest {
         softly.assertThat(createUser.getId()).isNotNull().isNotNegative();
 
         createUserResponseModelList.add(createUser);
-
+        UserSteps userSteps = new UserSteps(userLoginRequestModel);
         // create account
-        CreateAccountResponseModel accountResponseModel = UserSteps.createAccount(userLoginRequestModel);
+        CreateAccountResponseModel accountResponseModel = userSteps.createAccount();
 
         softly.assertThat(accountResponseModel.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(accountResponseModel.getId()).isNotNull();
 
         // check that account was created
-        CreateAccountResponseModel createdAccount = UserSteps.getAccounts(userLoginRequestModel).get(0);
+        CreateAccountResponseModel createdAccount = userSteps.getAccounts().get(0);
         softly.assertThat(createdAccount).isNotNull();
 
         //create transaction
         CreateTransactionRequestModel transaction = EntityGenerator.generate(CreateTransactionRequestModel.class);
         transaction.setId(createdAccount.getId());
-        CreateAccountResponseModel accountWithNewTransaction = UserSteps.createTransaction(userLoginRequestModel, transaction);
+        CreateAccountResponseModel accountWithNewTransaction = userSteps.createTransaction( transaction);
         ModelAssertions.assertThatModelsMatch(softly, transaction, accountWithNewTransaction.getTransactions().get(0));
 
     }
@@ -70,14 +70,15 @@ public class CreateTransactionTest extends BaseTest {
 
         createUserResponseModelList.add(createUser);
 
+        UserSteps userSteps = new UserSteps(userLoginRequestModel);
         // create account
-        CreateAccountResponseModel accountResponseModel = UserSteps.createAccount(userLoginRequestModel);
+        CreateAccountResponseModel accountResponseModel = userSteps.createAccount();
 
         softly.assertThat(accountResponseModel.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(accountResponseModel.getId()).isNotNull();
 
         // check that account was created
-        CreateAccountResponseModel createdAccount = UserSteps.getAccounts(userLoginRequestModel).get(0);
+        CreateAccountResponseModel createdAccount = userSteps.getAccounts().get(0);
         softly.assertThat(createdAccount).isNotNull();
 
         //create transaction
