@@ -43,13 +43,19 @@ public class UserSteps {
     public  List<CreateTransactionResponseModel> getUserAccountTransaction(long accountId){
         return new Request(
                 RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()),
-                ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_TRANSACTIONS).get(accountId).extract().as(new TypeRef<List<CreateTransactionResponseModel>>() {});
+                ResponseSpec.responseIsOk(), Endpoint.ACCOUNTS_TRANSACTIONS)
+                .get(accountId).extract().as(new TypeRef<List<CreateTransactionResponseModel>>() {});
     }
 
     public  List<CreateAccountResponseModel> getAccounts() {
-
         return new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()), ResponseSpec.responseIsOk(), Endpoint.CUSTOMER_ACCOUNT)
                 .getAll().extract().as(new TypeRef<List<CreateAccountResponseModel>>() {});
+    }
+
+    public CreateUserResponseModel getProfile(){
+        return new Request(RequestSpec.userAuthorizedSpec(userLoginRequest.getUsername(), userLoginRequest.getPassword()),
+                ResponseSpec.responseIsOk(), Endpoint.CUSTOMER_PROFILE)
+                .get(0).extract().as(CreateUserResponseModel.class);
     }
 
     public  CreateCustomerRequestModel changeName(CreateCustomerNameRequestModel customerNameRequestModel, long id){

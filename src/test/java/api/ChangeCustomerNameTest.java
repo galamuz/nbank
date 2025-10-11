@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ChangeCustomerTest extends BaseTest {
+public class ChangeCustomerNameTest extends BaseTest {
     private static List<CreateUserResponseModel> createUserResponseModelList;
 
     @BeforeAll

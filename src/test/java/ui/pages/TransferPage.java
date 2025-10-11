@@ -9,7 +9,7 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class TransferPage extends BasePage<UserDashboardPage> {
+public class TransferPage extends BasePage<TransferPage> {
     private final SelenideElement accountSelector =  $("select").shouldBe(Condition.visible, Duration.ofSeconds(10));
     private final SelenideElement recipientNameInput = $(Selectors.byAttribute("placeholder","Enter recipient name"));
     private final SelenideElement recipientAccountInput = $(Selectors.byAttribute("placeholder","Enter recipient account number"));

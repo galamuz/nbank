@@ -1,27 +1,18 @@
 package ui;
 
 import api.generation.EntityGenerator;
-import api.models.*;
-import api.requests.steps.AdminSteps;
-import api.requests.steps.UserSteps;
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selectors;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
+import api.models.CreateAccountResponseModel;
+import api.models.CreateTransactionRequestModel;
+import api.models.CreateTransactionResponseModel;
 import common.annotation.UserSession;
-import common.extention.AdminSessionExtension;
 import common.storage.SessionStorage;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import ui.pages.DepositPage;
 import ui.pages.TransferPage;
 import ui.pages.UserDashboardPage;
-import utils.Constants;
-import java.time.Duration;
+
 import java.util.Random;
 
-import static com.codeborne.selenide.Selenide.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 

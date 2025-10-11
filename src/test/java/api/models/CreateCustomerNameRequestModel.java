@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data
 public class CreateCustomerNameRequestModel extends BaseModel{
-    @GeneratingRules(regexp = "[A-Za-z0-9]{3,350}")
+    @GeneratingRules(regexp = "[A-Za-z]+ [A-Za-z]+")
     private String name;
 
 }

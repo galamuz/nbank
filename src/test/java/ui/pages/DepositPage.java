@@ -9,7 +9,7 @@ import java.time.Duration;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class DepositPage extends BasePage<UserDashboardPage> {
+public class DepositPage extends BasePage<DepositPage> {
     private final SelenideElement accountSelector =  $("select").shouldBe(Condition.visible, Duration.ofSeconds(10));
     private final SelenideElement amountInput = $(Selectors.byAttribute("placeholder","Enter amount"));
     private final SelenideElement button =  $(Selectors.byText("\uD83D\uDCB5 Deposit"));
