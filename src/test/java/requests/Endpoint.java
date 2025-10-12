@@ -25,13 +25,13 @@ public enum Endpoint {
             LoginUserResponseModal.class
     ),
     ACCOUNTS_TRANSACTIONS(
-        Constants.ACCOUNT_URL + "/%s"+Constants.TRANSACTION_URL,
-        BaseModel.class,
-        BaseModel.class
-);
+            Constants.ACCOUNT_URL + "/%s"+Constants.TRANSACTION_URL,
+            BaseModel.class,
+            BaseModel.class
+    );
 
     private final String url;
     private final Class<? extends BaseModel> requestModel;
     private final Class<? extends BaseModel> responceModel;
-    
+
 }

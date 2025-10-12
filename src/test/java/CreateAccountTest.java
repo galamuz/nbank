@@ -1,4 +1,4 @@
-import generation.RandomData;
+import generation.EntityGenerator;
 import models.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -7,6 +7,8 @@ import requests.Endpoint;
 import requests.Request;
 import requests.specs.RequestSpec;
 import requests.specs.ResponseSpec;
+import requests.steps.AdminSteps;
+import requests.steps.UserSteps;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,53 +24,42 @@ public class CreateAccountTest extends BaseTest {
     //Positive: POST -  User can create account
     @Test
      public void userCanCreateAccount(){
-         CreateUserRequestModel createUserRequestModel = CreateUserRequestModel.builder()
-                 .username(RandomData.getUserName())
-                 .password(RandomData.getPassword())
-                 .role(UserRole.USER.toString())
-                 .build();
+         CreateUserRequestModel createUserRequestModel = EntityGenerator.generate(CreateUserRequestModel.class);
 
         LoginUserRequestModel userLoginRequestModel = LoginUserRequestModel.builder()
                 .username(createUserRequestModel.getUsername())
                 .password(createUserRequestModel.getPassword()).build();
 
          // create user
-        CreateUserResponseModel createUserResponceModel = new Request<CreateUserRequestModel>(RequestSpec.adminAuthorizedSpec(), ResponseSpec.entityWasCreated(), Endpoint.USER)
-                .post(createUserRequestModel).extract().as(CreateUserResponseModel.class);
+        CreateUserResponseModel createUser = AdminSteps.createUser(createUserRequestModel);
+        softly.assertThat(createUser.getId()).isNotNull().isNotNegative();
 
-        createUserResponseModelList.add(createUserResponceModel);
+        createUserResponseModelList.add(createUser);
 
         // create account
-        CreateAccountResponseModel accountResponceModel=   new Request<BaseModel>(RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(),userLoginRequestModel.getPassword()), ResponseSpec.entityWasCreated(),Endpoint.ACCOUNTS)
-                     .post(null).extract().as(CreateAccountResponseModel.class);
+        CreateAccountResponseModel accountResponseModel= UserSteps.createAccount(userLoginRequestModel);
 
-        softly.assertThat(accountResponceModel.getAccountNumber()).isNotNull().isNotEmpty();
-        softly.assertThat(accountResponceModel.getId()).isNotNull();
+        softly.assertThat(accountResponseModel.getAccountNumber()).isNotNull().isNotEmpty();
+        softly.assertThat(accountResponseModel.getId()).isNotNull();
 
-      
         // check that account was created
-          new Request<BaseModel>(
-            RequestSpec.userAuthorizedSpec(userLoginRequestModel.getUsername(), userLoginRequestModel.getPassword()),
-            ResponseSpec.responseIsOk(),Endpoint.ACCOUNTS_TRANSACTIONS).get(accountResponceModel.getId());
+        UserSteps.getUserAccountTransaction(userLoginRequestModel,accountResponseModel);
 
     }
+
     //Negative: POST -  Unathorized user can not create account
     @Test
     public void userCanNotCreateAccountWithoutAuthentication(){
 
         // create account
-         new Request<BaseModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(),Endpoint.ACCOUNTS)
+         new Request(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(),Endpoint.ACCOUNTS)
                 .post(null);
 
     }
     @AfterAll
     public static void deleteTestData() {
-
         for(CreateUserResponseModel user : createUserResponseModelList) {
-            new Request<BaseModel>(
-                    RequestSpec.adminAuthorizedSpec(),
-                    ResponseSpec.entityWasDeleted(), Endpoint.USER).delete(user.getId());
-
+            AdminSteps.deleteUser(user);
         }
 
     }

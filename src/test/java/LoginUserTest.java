@@ -1,11 +1,9 @@
-import generation.RandomData;
+import generation.EntityGenerator;
 import models.*;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.*;
-import requests.Endpoint;
-import requests.Request;
-import requests.specs.RequestSpec;
-import requests.specs.ResponseSpec;
+import requests.steps.AdminSteps;
+import requests.steps.UserSteps;
 import utils.Constants;
 
 import java.util.ArrayList;
@@ -17,21 +15,15 @@ public class LoginUserTest extends BaseTest {
     private static List<CreateUserResponseModel> createUserResponseModelList;
 
     @BeforeAll
-    public static void setUpTest(){
-        createUserResponseModelList= new ArrayList<>();
+    public static void setUpTest() {
+        createUserResponseModelList = new ArrayList<>();
     }
 
 
     @BeforeEach
     public void generateTestData() {
-        createUserRequestModel = CreateUserRequestModel.builder()
-                .username(RandomData.getUserName())
-                .password(RandomData.getPassword())
-                .role(UserRole.USER.toString())
-                .build();
-
-
-        userLoginRequestModel = LoginUserRequestModel.builder()
+        createUserRequestModel = EntityGenerator.generate(CreateUserRequestModel.class);
+         userLoginRequestModel = LoginUserRequestModel.builder()
                 .username(createUserRequestModel.getUsername())
                 .password(createUserRequestModel.getPassword())
                 .build();
@@ -43,48 +35,39 @@ public class LoginUserTest extends BaseTest {
         userLoginRequestModel.setUsername(Constants.ADMIN_USER);
         userLoginRequestModel.setPassword(Constants.ADMIN_PASSWORD);
 
-        new Request<LoginUserRequestModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.LOGIN)
-                .post(userLoginRequestModel).header(Constants.HEADER_AUTH, Matchers.notNullValue());
+        softly.assertThat(
+                UserSteps.login(userLoginRequestModel)
+                        .header(Constants.HEADER_AUTH, Matchers.notNullValue()));
     }
 
     @Test
     public void userCanCreateAuthTokenTest() {
 
-        // create user
-        CreateUserResponseModel  createUserResponseModel = new Request<CreateUserRequestModel>(RequestSpec.adminAuthorizedSpec(), ResponseSpec.entityWasCreated(), Endpoint.USER)
-                .post(createUserRequestModel).extract().as(CreateUserResponseModel.class);
-
+        CreateUserResponseModel createUserResponseModel = AdminSteps.createUser(createUserRequestModel);
 
         createUserResponseModelList.add(createUserResponseModel);
 
-       new Request<LoginUserRequestModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseIsOk(), Endpoint.LOGIN)
-                .post(userLoginRequestModel)
-                .header(Constants.HEADER_AUTH, Matchers.notNullValue());
+        softly.assertThat(
+                UserSteps.login(userLoginRequestModel)
+                        .header(Constants.HEADER_AUTH, Matchers.notNullValue()));
     }
 
     @Test
     public void userCanNotCreateAuthTokenWithIncorrectPasswordTest() {
 
-        // create user
-        CreateUserResponseModel  createUserResponseModel =  new Request<CreateUserRequestModel>(RequestSpec.adminAuthorizedSpec(), ResponseSpec.entityWasCreated(), Endpoint.USER)
-                .post(createUserRequestModel).extract().as(CreateUserResponseModel.class);
+        CreateUserResponseModel createUserResponseModel = AdminSteps.createUser(createUserRequestModel);
 
         createUserResponseModelList.add(createUserResponseModel);
         userLoginRequestModel.setPassword("");
 
-        new Request<LoginUserRequestModel>(RequestSpec.unauthorizedSpec(), ResponseSpec.responseWasUnauthorized(), Endpoint.LOGIN)
-                .post(userLoginRequestModel);
+        UserSteps.unauthLogin(userLoginRequestModel);
     }
+
     @AfterAll
     public static void deleteTestData() {
-
-        for(CreateUserResponseModel user : createUserResponseModelList) {
-            new Request<BaseModel>(
-                    RequestSpec.adminAuthorizedSpec(),
-                    ResponseSpec.entityWasDeleted(), Endpoint.USER).delete(user.getId());
-
+        for (CreateUserResponseModel user : createUserResponseModelList) {
+            AdminSteps.deleteUser(user);
         }
-
     }
 
 }
