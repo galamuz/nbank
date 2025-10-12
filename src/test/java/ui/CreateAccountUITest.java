@@ -4,9 +4,12 @@ import api.generation.EntityGenerator;
 import api.models.CreateAccountResponseModel;
 import api.models.CreateTransactionRequestModel;
 import api.models.CreateTransactionResponseModel;
+import api.models.comparator.ModelAssertions;
 import common.annotation.UserSession;
 import common.storage.SessionStorage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import ui.pages.DepositPage;
 import ui.pages.TransferPage;
 import ui.pages.UserDashboardPage;
@@ -67,6 +70,23 @@ public class CreateAccountUITest extends BaseUITest {
         CreateTransactionResponseModel transactionSecond =  SessionStorage.getSteps().getUserAccountTransaction(accountSecond.getId()).get(0);;
         assertThat(transactionSecond).isNotNull();
         assertThat(transactionSecond.getAmount()).isEqualTo(transaction.getBalance());
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {4})
+    @UserSession
+    public void userCanSeeAllTransfers(int collectionTestSize) {
+        for (int i = 0; i < collectionTestSize; i++) {
+            CreateAccountResponseModel account = SessionStorage.getSteps().createAccount();
+            CreateTransactionRequestModel transaction = EntityGenerator.generate(CreateTransactionRequestModel.class);
+            transaction.setId(account.getId());
+            SessionStorage.getSteps().createTransaction(transaction);
+        }
+
+        int actualSize = new UserDashboardPage().open().createTransfer().getPage(TransferPage.class)
+                .repeatDeposit().getAllTransfers().size();
+
+        assertThat(actualSize).isEqualTo(collectionTestSize);
     }
 
 }

@@ -2,11 +2,17 @@ package ui.pages;
 
 import api.models.LoginUserRequestModel;
 import api.requests.steps.UserSteps;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.Alert;
 import ui.UIAlerts;
+import ui.elemements.BaseElement;
 import utils.BaseTest;
 import utils.Constants;
+
+import java.util.List;
+import java.util.function.Function;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.switchTo;
@@ -32,4 +38,10 @@ public abstract class BasePage<T extends BasePage> extends BaseTest {
         Selenide.open("/");
         executeJavaScript("localStorage.setItem('authToken',arguments[0])",adminAuthToken);
     }
+
+    protected <T extends BaseElement> List<T> generatePageElement(ElementsCollection elementsCollection, Function<SelenideElement,T> constructor){
+
+        return elementsCollection.stream().map(constructor).toList();
+    }
+
 }

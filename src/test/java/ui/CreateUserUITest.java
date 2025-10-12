@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import ui.pages.AdminPanelPage;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(AdminSessionExtension.class)
 public class CreateUserUITest extends BaseUITest {
@@ -22,9 +23,10 @@ public class CreateUserUITest extends BaseUITest {
     public void adminCanCreateUserWithCorrectDataTest() {
         user = EntityGenerator.generate(CreateUserRequestModel.class);
         // create user
-        new AdminPanelPage().open().createUser(user.getUsername(),user.getPassword())
+       assertTrue(new AdminPanelPage().open().createUser(user.getUsername(),user.getPassword())
                 .checkAlertMessageAndAccept(UIAlerts.USER_CREATED_SUCCESSFULLY)
-                .getAllUsers().findBy(Condition.exactText(user.getUsername()+"\nUSER")).shouldBe(Condition.visible);
+                .getAllUsers().stream()
+               .anyMatch(userListElement -> userListElement.getUserName().equals(user.getUsername())));
 
         // api - user created
         CreateUserResponseModel createUser = AdminSteps.getAllUsers().stream()
@@ -39,9 +41,10 @@ public class CreateUserUITest extends BaseUITest {
     public void adminCanNotCreateUserWithInvalideDataTest() {
         user = EntityGenerator.generate(CreateUserRequestModel.class);
         user.setUsername("we");
-        // create user
-        new AdminPanelPage().open().createUser(user.getUsername(),user.getPassword())
-                .checkAlertMessageAndAccept(UIAlerts.USER_CREATED_UNSUCCESSFULLY);
+
+        assertTrue(new AdminPanelPage().open().createUser(user.getUsername(),user.getPassword())
+                .checkAlertMessageAndAccept(UIAlerts.USER_CREATED_UNSUCCESSFULLY)
+                .getAllUsers().stream().noneMatch(userListElement -> userListElement.getUserName().equals(user.getUsername())));
 
         // api - user created
         CreateUserResponseModel createUser = AdminSteps.getAllUsers().stream()
