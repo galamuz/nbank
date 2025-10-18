@@ -1,0 +1,73 @@
+1. An authorized user can see their accounts
+2. An authorized user can add funds to their account.
+3. An authorized user can see the transactions of their accounts
+4. An authorized user can transfer money from one account to another
+5. An authorized user can change their profile name.
+
+
+### Positive: GET -  An authorized user can see their accounts
+GET http://localhost:4111/api/v1/customer/accounts
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+
+
+### Positive: POST -  An authorized user can add funds to their account.
+POST http://localhost:4111//api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+{
+  "id": 1,
+  "balance": 100
+}
+
+### Negative: POST -  An authorized user can add funds to invalid amount.
+POST http://localhost:4111//api/v1/accounts/deposit
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+{
+  "id": 1,
+  "balance": -100
+}
+
+### Positive: GET -  An authorized user can see the transactions of their accounts
+GET http://localhost:4111/api/v1/accounts/1/transactions
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk'
+
+
+### Positive: POST -  An authorized user can transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 50
+}
+### Negative: POST -  An authorized user can not transfer incorrect amount
+POST http://localhost:4111/api/v1/accounts/transfer
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": -50
+}
+
+
+### Positive: PUT -  An authorized user can change their profile name.
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+{
+  "name": "New Name"
+}
+
+### Negative: PUT -  An authorized user can not change too long profile name .
+PUT http://localhost:4111/api/v1/customer/profile
+Content-Type: application/json
+Authorization: Basic a2F0ZTE5OTg6dmVyeXNUUm9uZ1Bhc3N3b3JkMzMk
+{
+  "name": "New Name"
+}
+
