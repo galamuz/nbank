@@ -66,16 +66,16 @@ public class CreateUserTest extends BaseTest {
 
     static Stream<Arguments> invalidUserProvider() {
         return Stream.of(
-//                Arguments.of("username", "Username cannot be blank",
-//                        withInvalidField("username", "    ")),
+                Arguments.of("username", "Username cannot be blank",
+                        withInvalidField("username", "    ")),
                 Arguments.of("username", "Username must be between 3 and 15 characters",
                         withInvalidField("username", RandomStringUtils.secure().nextAlphabetic(2).toLowerCase())),
                 Arguments.of("username", "Username must be between 3 and 15 characters",
                         withInvalidField("username",  RandomStringUtils.secure().nextAlphabetic(16).toLowerCase())),
                 Arguments.of("username", "Username must contain only letters, digits, dashes, underscores, and dots",
                         withInvalidField("username",  "useruser#")),
-//                Arguments.of("password", "Password cannot be blank",
-//                        withInvalidField("password", "   ")),
+                Arguments.of("password", "Password cannot be blank",
+                        withInvalidField("password", "   ")),
                 Arguments.of("password", "Password must contain at least one digit, one lower case, one upper case, one special character, no spaces, and be at least 8 characters long",
                         withInvalidField("password", "aW1@123")),
                 Arguments.of("role", "Role must be either 'ADMIN' or 'USER'",

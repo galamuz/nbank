@@ -15,6 +15,7 @@ import utils.BaseTest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreateTransferTest extends BaseTest {
     private static List<CreateUserResponseModel> createUserResponseModelList;
@@ -74,9 +75,13 @@ public class CreateTransferTest extends BaseTest {
         softly.assertThat(createTransfer.getMessage()).isEqualTo("Transfer successful");
         // chek that second account has amount transaction
 
-        createdAccount_2 =userSteps.getAccounts().get(1);
-        softly.assertThat(createdAccount_2.getBalance()).isEqualTo(transfer.getAmount());
-    }
+        softly.assertThat(
+                userSteps.getUserAccountTransaction(account_2.getId())
+                        .stream()
+                        .map(CreateTransactionResponseModel::getAmount)
+                        .collect(Collectors.toList())
+        ).contains(transfer.getAmount());
+   }
 
     @Test
     public void userCanMakeTransferAccount() {
@@ -139,8 +144,7 @@ public class CreateTransferTest extends BaseTest {
         softly.assertThat(createTransfer.getMessage()).isEqualTo("Transfer successful");
         // chek that second account has amount transaction
 
-        createdSecondAccount =userSecondSteps.getAccounts().get(0);
-        softly.assertThat(createdSecondAccount.getBalance()).isEqualTo(transfer.getAmount());
+        softly.assertThat(userSecondSteps.getAccounts().get(0).getBalance()).isEqualTo(transfer.getAmount());
     }
     @Test
     public void userCanNotMakeTransferWithIncorrectData() {
