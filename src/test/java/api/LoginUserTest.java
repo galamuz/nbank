@@ -1,11 +1,16 @@
 package api;
 
 import api.generation.EntityGenerator;
-import api.models.*;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.*;
+import api.models.CreateUserRequestModel;
+import api.models.CreateUserResponseModel;
+import api.models.LoginUserRequestModel;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.UserSteps;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import utils.BaseTest;
 import utils.Constants;
 
@@ -22,15 +27,20 @@ public class LoginUserTest extends BaseTest {
         createUserResponseModelList = new ArrayList<>();
     }
 
+    @AfterAll
+    public static void deleteTestData() {
+        for (CreateUserResponseModel user : createUserResponseModelList) {
+            AdminSteps.deleteUser(user);
+        }
+    }
 
     @BeforeEach
     public void generateTestData() {
         createUserRequestModel = EntityGenerator.generate(CreateUserRequestModel.class);
-         userLoginRequestModel = LoginUserRequestModel.builder()
+        userLoginRequestModel = LoginUserRequestModel.builder()
                 .username(createUserRequestModel.getUsername())
                 .password(createUserRequestModel.getPassword())
                 .build();
-
     }
 
     @Test
@@ -50,8 +60,8 @@ public class LoginUserTest extends BaseTest {
 
         createUserResponseModelList.add(createUserResponseModel);
 
-        softly.assertThat( new UserSteps(userLoginRequestModel).login()
-                        .header(Constants.HEADER_AUTH, Matchers.notNullValue()));
+        softly.assertThat(new UserSteps(userLoginRequestModel).login()
+                .header(Constants.HEADER_AUTH, Matchers.notNullValue()));
     }
 
     @Test
@@ -63,13 +73,6 @@ public class LoginUserTest extends BaseTest {
         userLoginRequestModel.setPassword("");
 
         new UserSteps(userLoginRequestModel).unauthenticLogin();
-    }
-
-    @AfterAll
-    public static void deleteTestData() {
-        for (CreateUserResponseModel user : createUserResponseModelList) {
-            AdminSteps.deleteUser(user);
-        }
     }
 
 }

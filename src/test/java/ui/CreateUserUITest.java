@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(AdminSessionExtension.class)
 public class CreateUserUITest extends BaseUITest {
-    private static CreateUserRequestModel user;
+    private CreateUserRequestModel user;
 
     @Test
     @AdminSession
@@ -33,7 +33,7 @@ public class CreateUserUITest extends BaseUITest {
                                 .getAllUsers()
                                 .stream()
                                 .anyMatch(u -> u.getUserName().equals(user.getUsername())),
-                        result -> result, // условие выхода — пользователь найден (true)
+                        result -> result,
                         Constants.MAX_ATTEMPTS,
                         Constants.NEXT_ATTEMPT_DELAY
                 ),

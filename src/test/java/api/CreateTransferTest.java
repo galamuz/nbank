@@ -2,15 +2,15 @@ package api;
 
 import api.generation.EntityGenerator;
 import api.models.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import api.requests.Endpoint;
 import api.requests.Request;
 import api.requests.specs.RequestSpec;
 import api.requests.specs.ResponseSpec;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.UserSteps;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import utils.BaseTest;
 
 import java.util.ArrayList;
@@ -23,6 +23,13 @@ public class CreateTransferTest extends BaseTest {
     @BeforeAll
     public static void setUpTest() {
         createUserResponseModelList = new ArrayList<>();
+    }
+
+    @AfterAll
+    public static void deleteTestData() {
+        for (CreateUserResponseModel user : createUserResponseModelList) {
+            AdminSteps.deleteUser(user);
+        }
     }
 
     @Test
@@ -41,7 +48,7 @@ public class CreateTransferTest extends BaseTest {
         UserSteps userSteps = new UserSteps(userLoginRequestModel);
 
         // create account
-        CreateAccountResponseModel account_1= userSteps.createAccount();
+        CreateAccountResponseModel account_1 = userSteps.createAccount();
 
         softly.assertThat(account_1.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_1.getId()).isNotNull();
@@ -56,7 +63,7 @@ public class CreateTransferTest extends BaseTest {
 
         // create second account
 
-        CreateAccountResponseModel account_2= userSteps.createAccount();
+        CreateAccountResponseModel account_2 = userSteps.createAccount();
 
         softly.assertThat(account_2.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_2.getId()).isNotNull();
@@ -70,7 +77,7 @@ public class CreateTransferTest extends BaseTest {
         transfer.setReceiverAccountId(account_2.getId());
         transfer.setAmount(transaction.getBalance());
 
-        CreateTransferResponseModel createTransfer =  userSteps.createTransfer(transfer);
+        CreateTransferResponseModel createTransfer = userSteps.createTransfer(transfer);
         softly.assertThat(createTransfer).isNotNull();
         softly.assertThat(createTransfer.getMessage()).isEqualTo("Transfer successful");
         // chek that second account has amount transaction
@@ -81,7 +88,7 @@ public class CreateTransferTest extends BaseTest {
                         .map(CreateTransactionResponseModel::getAmount)
                         .collect(Collectors.toList())
         ).contains(transfer.getAmount());
-   }
+    }
 
     @Test
     public void userCanMakeTransferAccount() {
@@ -99,7 +106,7 @@ public class CreateTransferTest extends BaseTest {
 
         UserSteps userFirstSteps = new UserSteps(firstUserLogin);
         // create account
-        CreateAccountResponseModel account_1= userFirstSteps.createAccount();
+        CreateAccountResponseModel account_1 = userFirstSteps.createAccount();
 
         softly.assertThat(account_1.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_1.getId()).isNotNull();
@@ -125,7 +132,7 @@ public class CreateTransferTest extends BaseTest {
         UserSteps userSecondSteps = new UserSteps(secondUserLogin);
         createUserResponseModelList.add(createdSecondUser);
         // create second account
-        CreateAccountResponseModel account_2= userSecondSteps.createAccount();
+        CreateAccountResponseModel account_2 = userSecondSteps.createAccount();
 
         softly.assertThat(account_2.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_2.getId()).isNotNull();
@@ -139,13 +146,14 @@ public class CreateTransferTest extends BaseTest {
         transfer.setReceiverAccountId(account_2.getId());
         transfer.setAmount(transaction.getBalance());
 
-        CreateTransferResponseModel createTransfer =  userFirstSteps.createTransfer(transfer);
+        CreateTransferResponseModel createTransfer = userFirstSteps.createTransfer(transfer);
         softly.assertThat(createTransfer).isNotNull();
         softly.assertThat(createTransfer.getMessage()).isEqualTo("Transfer successful");
         // chek that second account has amount transaction
 
         softly.assertThat(userSecondSteps.getAccounts().get(0).getBalance()).isEqualTo(transfer.getAmount());
     }
+
     @Test
     public void userCanNotMakeTransferWithIncorrectData() {
         CreateUserRequestModel createUserRequestModel = EntityGenerator.generate(CreateUserRequestModel.class);
@@ -162,7 +170,7 @@ public class CreateTransferTest extends BaseTest {
 
         // create account
         UserSteps userFirstSteps = new UserSteps(userLoginRequestModel);
-        CreateAccountResponseModel account_1= userFirstSteps.createAccount();
+        CreateAccountResponseModel account_1 = userFirstSteps.createAccount();
 
         softly.assertThat(account_1.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_1.getId()).isNotNull();
@@ -177,7 +185,7 @@ public class CreateTransferTest extends BaseTest {
 
         // create second account
 
-        CreateAccountResponseModel account_2= userFirstSteps.createAccount();
+        CreateAccountResponseModel account_2 = userFirstSteps.createAccount();
 
         softly.assertThat(account_2.getAccountNumber()).isNotNull().isNotEmpty();
         softly.assertThat(account_2.getId()).isNotNull();
@@ -189,7 +197,7 @@ public class CreateTransferTest extends BaseTest {
         CreateTransferRequestModel transfer = EntityGenerator.generate(CreateTransferRequestModel.class);
         transfer.setSenderAccountId(account_1.getId());
         transfer.setReceiverAccountId(account_2.getId());
-        transfer.setAmount(-1*transaction.getBalance());
+        transfer.setAmount(-1 * transaction.getBalance());
 
 
         new Request(
@@ -198,11 +206,4 @@ public class CreateTransferTest extends BaseTest {
                 .post(transfer);
 
     }
-    @AfterAll
-    public static void deleteTestData() {
-        for (CreateUserResponseModel user : createUserResponseModelList) {
-           // AdminSteps.deleteUser(user);
-        }
-    }
-
 }

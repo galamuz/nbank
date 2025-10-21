@@ -3,16 +3,17 @@ package api;
 import api.generation.EntityGenerator;
 import api.models.*;
 import api.models.comparator.ModelAssertions;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import api.requests.Endpoint;
 import api.requests.Request;
 import api.requests.specs.RequestSpec;
 import api.requests.specs.ResponseSpec;
 import api.requests.steps.AdminSteps;
 import api.requests.steps.UserSteps;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import utils.BaseTest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,13 @@ public class CreateTransactionTest extends BaseTest {
     @BeforeAll
     public static void setUpTest() {
         createUserResponseModelList = new ArrayList<>();
+    }
+
+    @AfterAll
+    public static void deleteTestData() {
+        for (CreateUserResponseModel user : createUserResponseModelList) {
+            AdminSteps.deleteUser(user);
+        }
     }
 
     @Test
@@ -51,7 +59,7 @@ public class CreateTransactionTest extends BaseTest {
         //create transaction
         CreateTransactionRequestModel transaction = EntityGenerator.generate(CreateTransactionRequestModel.class);
         transaction.setId(createdAccount.getId());
-        CreateAccountResponseModel accountWithNewTransaction = userSteps.createTransaction( transaction);
+        CreateAccountResponseModel accountWithNewTransaction = userSteps.createTransaction(transaction);
         ModelAssertions.assertThatModelsMatch(softly, transaction, accountWithNewTransaction.getTransactions().get(0));
 
     }
@@ -91,12 +99,5 @@ public class CreateTransactionTest extends BaseTest {
                 ResponseSpec.responseReturnedBadRequest("Invalid account or amount"), Endpoint.ACCOUNTS_DEPOSIT)
                 .post(transaction);
     }
-    @AfterAll
-    public static void deleteTestData() {
-        for (CreateUserResponseModel user : createUserResponseModelList) {
-            AdminSteps.deleteUser(user);
-        }
-    }
-
 }
 

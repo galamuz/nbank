@@ -14,19 +14,19 @@ public class LoginUserUITest extends BaseUITest {
 
     @Test
     @Browsers({"chrome"})
-    public void adminCanLoginWithCorrectDataTest(){
+    public void adminCanLoginWithCorrectDataTest() {
         CreateUserRequestModel user = CreateUserRequestModel.getAdmin();
 
-        new LoginPage().open().login(user.getUsername(),user.getPassword())
+        new LoginPage().open().login(user.getUsername(), user.getPassword())
                 .getPage(AdminPanelPage.class).getAdminPanelText().shouldBe(Condition.visible);
     }
 
     @Test
-    public void userCanLoginWithCorrectDataTest(){
+    public void userCanLoginWithCorrectDataTest() {
         CreateUserRequestModel user = EntityGenerator.generate(CreateUserRequestModel.class);
         AdminSteps.createUser(user);
 
-        new LoginPage().open().login(user.getUsername(),user.getPassword())
+        new LoginPage().open().login(user.getUsername(), user.getPassword())
                 .getPage(UserDashboardPage.class).getUserDashboardText().shouldBe(Condition.visible);
     }
 }
