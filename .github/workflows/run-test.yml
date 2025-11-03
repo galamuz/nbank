@@ -31,4 +31,4 @@ jobs:
           bash restart_docker.sh
           popd
       - name: Run test
-        run: ./mvn clean test
+        run: ./mvnw clean test
