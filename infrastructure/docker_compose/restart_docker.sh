@@ -8,4 +8,4 @@ docker pull selenoid/vnc:chrome_91.0
 docker pull selenoid/vnc:opera_76.0
 
 echo ">>> run docker compose"
-docker compose up
+docker compose up -d

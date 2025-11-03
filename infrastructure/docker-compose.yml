@@ -20,7 +20,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./config/nginx.conf:/etc/nginx/conf.d/nginx.conf:ro
     depends_on:
       - backend
       - frontend
@@ -29,6 +29,7 @@ services:
 
   selenoid:
     image: aerokube/selenoid:latest
+    platform: linux/amd64
     ports:
       - "4444:4444"
     volumes:
@@ -42,6 +43,7 @@ services:
 
   selenoid-ui:
     image: aerokube/selenoid-ui:latest
+    platform: linux/amd64
     ports:
       - "6567:8080"
     command: [ "--selenoid-uri", "http://selenoid:4444" ]
