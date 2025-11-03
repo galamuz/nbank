@@ -1,5 +1,6 @@
 package ui.pages;
 
+import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
@@ -9,6 +10,7 @@ import utils.Constants;
 
 import java.util.List;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
 @Getter
@@ -32,8 +34,12 @@ public class AdminPanelPage extends BasePage<AdminPanelPage> {
     }
 
     public List<UserListElement> getAllUsers() {
-
-        ElementsCollection elementsCollection = $(Selectors.byText("All Users")).parent().findAll("li");
+        SelenideElement allUsers = $(Selectors.byText("All Users")).shouldBe(visible);
+        ElementsCollection elementsCollection =
+                allUsers
+                        .parent()
+                        .findAll("li")
+                        .shouldHave(CollectionCondition.sizeGreaterThan(0));
         return generatePageElement(elementsCollection, UserListElement::new);
     }
 
