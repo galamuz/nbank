@@ -10,7 +10,7 @@ docker run -d                                   \
 -v /your/directory/config/:/etc/selenoid/:ro              \
 aerokube/selenoid:latest-release
 
-5. nginx - hide - nginx:latest 80:80
+
 
 
 steps for docker compose:
