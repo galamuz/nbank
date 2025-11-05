@@ -16,6 +16,7 @@ public class Constants {
     public static final String DEPOSIT_URL = "deposit";
     public static final String TRANSFER_URL = "transfer";
     //UI
+    public static final String REMOTE_UI_URL = Configs.getProperty("uiRemote");
     public static final String BASE_UI_URL = Configs.getProperty("uiServerUrl");
     public static final String LOGIN_UI_URL = "/login";
     public static final String USER_UI_URL = "/dashboard";
