@@ -32,3 +32,6 @@ jobs:
           popd
       - name: Run test
         run: ./mvnw clean test -q
+        env:
+          APIBASEURL: http://localhost:4444
+          UIBASEURL: http://frontend
