@@ -1,11 +1,27 @@
 #!/bin/bash
-echo ">>> stop docker compose"
+
+echo ">>> Остановить Docker Compose"
 docker compose down
 
-echo ">>> docker pull all images browsers"
-docker pull selenoid/vnc:firefox_89.0
-docker pull selenoid/vnc:chrome_91.0
-docker pull selenoid/vnc:opera_76.0
+echo ">>> Docker pull все образы браузеров"
 
-echo ">>> run docker compose"
+# Путь до файла
+json_file="./config/browsers.json"
+
+# Проверяем, что jq установлен
+if ! command -v jq &> /dev/null; then
+    echo "jq is not installed. Please install jq and try again."
+    exit 1
+fi
+
+# Извлекаем все значения .image через jq
+images=$(jq -r '.. | objects | select(.image) | .image' "$json_file")
+
+# Пробегаем по каждому образу и выполняем docker pull
+for image in $images; do
+    echo "Pulling $image..."
+    docker pull "$image"
+done
+
+echo ">>> Запуск Docker Compose"
 docker compose up -d
