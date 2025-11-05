@@ -5,7 +5,6 @@ docker compose down
 
 echo ">>> Docker pull all browsers"
 
-# Путь до файла
 json_file="./config/browsers.json"
 
 if ! command -v jq &> /dev/null; then
