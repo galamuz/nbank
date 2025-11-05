@@ -21,7 +21,7 @@ public class BaseUITest {
 
     @BeforeAll
     public static void setupSelenide() {
-        Configuration.remote = Constants.BASE_UI_URL;
+        Configuration.remote = Constants.REMOTE_UI_URL;
         Configuration.baseUrl = Constants.BASE_UI_URL;
 
         ChromeOptions chromeOptions = new ChromeOptions();
