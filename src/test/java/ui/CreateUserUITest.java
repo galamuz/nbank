@@ -22,7 +22,18 @@ public class CreateUserUITest extends BaseUITest {
     @Test
     @AdminSession
     public void adminCanCreateUserWithCorrectDataTest() {
-        user = EntityGenerator.generate(CreateUserRequestModel.class);
+       
+        boolean exists;
+        do {
+            // Генерируем нового пользователя
+            user = EntityGenerator.generate(CreateUserRequestModel.class);
+
+            // Проверяем, есть ли пользователь с таким username в базе
+            exists = AdminSteps.getAllUsers().stream()
+                    .anyMatch(u -> u.getUsername().equals(user.getUsername()));
+
+        } while (exists);
+
         // create user
         assertTrue(
                 RetryUtils.retry(
