@@ -4,6 +4,7 @@ import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import common.helpers.StepLogger;
 import lombok.Getter;
 import ui.elemements.UserListElement;
 import utils.Constants;
@@ -34,13 +35,15 @@ public class AdminPanelPage extends BasePage<AdminPanelPage> {
     }
 
     public List<UserListElement> getAllUsers() {
-        SelenideElement allUsers = $(Selectors.byText("All Users")).shouldBe(visible);
-        ElementsCollection elementsCollection =
-                allUsers
-                        .parent()
-                        .findAll("li")
-                        .shouldHave(CollectionCondition.sizeGreaterThan(0));
-        return generatePageElement(elementsCollection, UserListElement::new);
+        return StepLogger.log("Get all users from Dashboard", () -> {
+            SelenideElement allUsers = $(Selectors.byText("All Users")).shouldBe(visible);
+            ElementsCollection elementsCollection =
+                    allUsers
+                            .parent()
+                            .findAll("li")
+                            .shouldHave(CollectionCondition.sizeGreaterThan(0));
+            return generatePageElement(elementsCollection, UserListElement::new);
+        });
     }
 
 }
