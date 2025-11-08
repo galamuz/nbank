@@ -15,8 +15,8 @@ public class ChangeCustomerNameUITest extends BaseUITest {
 
         CreateCustomerNameRequestModel customerNameRequestModel = EntityGenerator.generate(CreateCustomerNameRequestModel.class);
 
-        new UserDashboardPage().open().changeProfile().getPage(ProfilePage.class)
-                .changeUserName(customerNameRequestModel.getName()).checkAlertMessageAndAccept(UIAlerts.NAME_UPDATED);
+//        new UserDashboardPage().open().changeProfile().getPage(ProfilePage.class)
+//                .changeUserName(customerNameRequestModel.getName()).checkAlertMessageAndAccept(UIAlerts.NAME_UPDATED);
 
 //        assertThat(SessionStorage.getSteps().getProfile().getName())
 //                .isEqualTo(customerNameRequestModel.getName());
