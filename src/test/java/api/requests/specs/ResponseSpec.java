@@ -24,7 +24,7 @@ public class ResponseSpec {
 
     public static ResponseSpecification responseReturnedBadRequest(String errorKey, String errorValue){
         return defaultResponseSpecBuilder().expectStatusCode(HttpStatus.SC_BAD_REQUEST)
-                .expectBody(errorKey, Matchers.equalTo(errorValue))
+                .expectBody(errorKey, Matchers.hasItem(errorValue))
                 .build();
     }
     public static ResponseSpecification responseReturnedBadRequest( String errorValue){
@@ -33,7 +33,7 @@ public class ResponseSpec {
                 .build();
     }
     public static ResponseSpecification entityWasDeleted(){
-        return defaultResponseSpecBuilder().expectStatusCode( HttpStatus.SC_NOT_FOUND).build();
+        return defaultResponseSpecBuilder().expectStatusCode( HttpStatus.SC_OK).build();
     }
 
 

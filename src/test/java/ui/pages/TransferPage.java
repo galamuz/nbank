@@ -38,7 +38,7 @@ public class TransferPage extends BasePage<TransferPage> {
         return this;
     }
     public List<TransferElementList> getAllTransfers(){
-        Selenide.sleep(2000);
+
         ElementsCollection elementsCollection = $(Selectors.byCssSelector("ul")).findAll("li");
         return  generatePageElement(elementsCollection, TransferElementList::new);
     }
