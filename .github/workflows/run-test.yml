@@ -1,82 +1,40 @@
-name: Run tests and push Docker image
+name: Run tests
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/**'    # workflow запускается только если изменился src
-  workflow_dispatch:
+# trigger
+on: [ push, workflow_dispatch ]
 
 jobs:
-  build-test-docker:
-    name: Run tests, build and push Docker image
+  run-tests:
+    name: Set up services and run tests
     runs-on: ubuntu-latest
-
-    env:
-      IMAGE_NAME: n-bank-test-image
-
     steps:
-      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Set up Java
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3. Cache Maven repository
       - name: Cache Maven repository
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os}}-maven-${{hashFiles('**/pom.xml')}}
           restore-key: |
-            ${{ runner.os }}-maven-
+            ${{ runner.os}}-maven-
 
-      # 4. Set up backend/frontend services
       - name: Set up services
         run: |
           pushd infrastructure/docker_compose
           bash restart_docker.sh
           popd
-
-      # 5. Make mvnw executable
-      - name: Make mvnw executable
-        run: chmod +x ./mvnw
-
-      # 6. Wait for backend to be ready
-      - name: Wait for backend
-        run: |
-          for i in {1..10}; do
-            if nc -z localhost 4444; then
-              echo "Backend ready!"
-              break
-            fi
-            sleep 3
-          done
-
-      # 7. Run Maven tests
-      - name: Run Maven tests
+      - name: Run test
         run: ./mvnw clean test -q
         env:
           APIBASEURL: http://localhost:4444
           UIBASEURL: http://frontend
-
-      # 8. Get commit hash
       - name: Get commit hash
         id: vars
         run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      # 9. Build Docker image
-      - name: Build Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/n-bank-test-image:${{ env.COMMIT_HASH }}
-
-      # 10. Login handled automatically by docker/build-push-action via secrets
