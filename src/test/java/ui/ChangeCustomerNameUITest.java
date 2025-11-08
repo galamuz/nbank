@@ -1,5 +1,7 @@
 package ui;
 
+import api.generation.EntityGenerator;
+import api.models.CreateCustomerNameRequestModel;
 import common.annotation.UserSession;
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +10,7 @@ public class ChangeCustomerNameUITest extends BaseUITest {
     @UserSession
     public void customerCanChangeName() {
 
-//        CreateCustomerNameRequestModel customerNameRequestModel = EntityGenerator.generate(CreateCustomerNameRequestModel.class);
+        CreateCustomerNameRequestModel customerNameRequestModel = EntityGenerator.generate(CreateCustomerNameRequestModel.class);
 
 //        new UserDashboardPage().open().changeProfile().getPage(ProfilePage.class)
 //                .changeUserName(customerNameRequestModel.getName()).checkAlertMessageAndAccept(UIAlerts.NAME_UPDATED);
