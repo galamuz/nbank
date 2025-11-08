@@ -30,8 +30,8 @@ public class ChangeCustomerNameUITest extends BaseUITest {
     @UserSession
     public void customerCanNotChangeNameForToShort() {
         String newShortName = RandomStringUtils.secure().nextAlphabetic(2).toLowerCase();
-//        new UserDashboardPage().open().changeProfile().getPage(ProfilePage.class)
-//                .changeUserName(newShortName).checkAlertMessageAndAccept(UIAlerts.NAME_NOT_UPDATED);
+        new UserDashboardPage().open().changeProfile().getPage(ProfilePage.class)
+                .changeUserName(newShortName).checkAlertMessageAndAccept(UIAlerts.NAME_NOT_UPDATED);
 //
 //        assertThat(SessionStorage.getSteps().getProfile().getName())
 //                .isNotEqualTo(newShortName);
