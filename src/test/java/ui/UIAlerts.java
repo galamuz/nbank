@@ -9,7 +9,7 @@ public enum UIAlerts {
     ACCOUNT_CREATED("New Account Created! Account Number:"),
     TRANSFER_CREATAD("Successfully transferred"),
     NAME_UPDATED("Name updated successfully!"),
-    NAME_NOT_UPDATED("Name must contain two words with letters only"),
+    NAME_NOT_UPDATED("Please enter a valid name"),
     DEPOSIT_CREATED("Successfully deposited");
     private final String message;
 
