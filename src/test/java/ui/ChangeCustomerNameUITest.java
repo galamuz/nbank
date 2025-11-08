@@ -7,7 +7,6 @@ public class ChangeCustomerNameUITest extends BaseUITest {
     @Test
     @UserSession
     public void customerCanChangeName() {
-        
 //        CreateCustomerNameRequestModel customerNameRequestModel = EntityGenerator.generate(CreateCustomerNameRequestModel.class);
 //
 //        new UserDashboardPage().open().changeProfile().getPage(ProfilePage.class)
