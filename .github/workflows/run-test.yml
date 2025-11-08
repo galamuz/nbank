@@ -38,3 +38,5 @@ jobs:
       - name: Get commit hash
         id: vars
         run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Build Docker image
+        run: docker build -t n-bank-test-image:${{ env.COMMIT_HASH }} .
