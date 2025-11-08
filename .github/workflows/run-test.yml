@@ -35,8 +35,17 @@ jobs:
         env:
           APIBASEURL: http://localhost:4444
           UIBASEURL: http://frontend
+
       - name: Get commit hash
         id: vars
         run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Build Docker image
         run: docker build -t n-bank-test-image:${{ env.COMMIT_HASH }} .
+
+      - name: Push Docker image to Docker Hub
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/n-bank-test-image:${{ env.COMMIT_HASH }}
