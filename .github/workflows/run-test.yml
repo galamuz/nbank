@@ -47,6 +47,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
+        env:
+          IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/n-bank-test-image
         run: docker build -t $IMAGE_NAME:${{ env.COMMIT_HASH }} .
 
       - name: Push Docker image
