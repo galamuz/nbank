@@ -5,6 +5,7 @@ import api.models.CreateUserRequestModel;
 import api.models.CreateUserResponseModel;
 import api.requests.steps.AdminSteps;
 import common.annotation.AdminSession;
+import common.annotation.Browsers;
 import common.extention.AdminSessionExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,11 +22,12 @@ public class CreateUserUITest extends BaseUITest {
 
     @Test
     @AdminSession
+    @Browsers({"chrome"})
     public void adminCanCreateUserWithCorrectDataTest() {
-       
+
         boolean exists;
         do {
-            // Генерируем нового пользователя
+
             user = EntityGenerator.generate(CreateUserRequestModel.class);
 
             // Проверяем, есть ли пользователь с таким username в базе
@@ -35,21 +37,24 @@ public class CreateUserUITest extends BaseUITest {
         } while (exists);
 
         // create user
-        assertTrue(
-                RetryUtils.retry(
-                        () -> new AdminPanelPage()
-                                .open()
-                                .createUser(user.getUsername(), user.getPassword())
-                                .checkAlertMessageAndAccept(UIAlerts.USER_CREATED_SUCCESSFULLY)
-                                .getAllUsers()
-                                .stream()
-                                .anyMatch(u -> u.getUserName().equals(user.getUsername())),
-                        result -> result,
-                        Constants.MAX_ATTEMPTS,
-                        Constants.NEXT_ATTEMPT_DELAY
-                ),
-                "User was not found in the user list after retries"
+        new AdminPanelPage()
+                .open()
+                .createUser(user.getUsername(), user.getPassword())
+                .checkAlertMessageAndAccept(UIAlerts.USER_CREATED_SUCCESSFULLY);
+
+
+        boolean userCreated = RetryUtils.retry(
+                () -> new AdminPanelPage()
+                        .open()
+                        .getAllUsers()
+                        .stream()
+                        .anyMatch(u -> u.getUserName().equals(user.getUsername())),
+                result -> result,
+                Constants.MAX_ATTEMPTS,
+                Constants.NEXT_ATTEMPT_DELAY
         );
+
+        assertTrue(userCreated, "User was not found in the user list after retries");
         // api - user created
         CreateUserResponseModel createUser = AdminSteps.getAllUsers().stream()
                 .filter(userResponse -> userResponse.getUsername().equals(user.getUsername()))
@@ -61,6 +66,7 @@ public class CreateUserUITest extends BaseUITest {
 
     @Test
     @AdminSession
+    @Browsers({"chrome"})
     public void adminCanNotCreateUserWithInvalideDataTest() {
         user = EntityGenerator.generate(CreateUserRequestModel.class);
         user.setUsername("we");

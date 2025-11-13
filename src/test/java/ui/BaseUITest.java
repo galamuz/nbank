@@ -1,10 +1,12 @@
 package ui;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import common.extention.AdminSessionExtension;
 import common.extention.BrowserMatchExtension;
 import common.extention.TimingExtension;
 import common.extention.UserSessionExtension;
+import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -31,6 +33,7 @@ public class BaseUITest {
         selenoidOptions.put("enableVNC", true);
         chromeOptions.setCapability("selenoid:options", selenoidOptions);
         Configuration.browserCapabilities = chromeOptions;
+        SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
         Configuration.headless = true;
     }
 

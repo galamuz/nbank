@@ -37,6 +37,25 @@ services:
       - selenoid
     networks:
       - nbank-network
+  tests:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: nbank-tests
+    environment:
+      TEST_PROFILE: api
+      BASEAPIURL: http://backend:4111
+      BASEUIURL: http://frontend:3000
+    volumes:
+      - ../../test-output/logs:/app/logs
+      - ../../test-output/results:/app/target/surefire-reports
+      - ../../test-output/reports:/app/target/site
+    depends_on:
+      - backend
+      - frontend
+      - selenoid
+    networks:
+      - nbank-network
 
 networks:
   nbank-network:
