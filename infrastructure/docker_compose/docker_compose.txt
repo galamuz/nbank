@@ -1,0 +1,19 @@
+1. backend- nobugsme/nbank:with_username_error_fix
+2. frontend - nobugsme/nbank-ui:latest
+3. aerokube/selenoid:latest
+4. aerokube/selenoid-ui:latest
+
+docker run -d                                   \
+--name selenoid                                 \
+-p 4444:4444                                    \
+-v /var/run/docker.sock:/var/run/docker.sock    \
+-v /your/directory/config/:/etc/selenoid/:ro              \
+aerokube/selenoid:latest-release
+
+
+
+
+steps for docker compose:
+1. docker-compose.yml
+2. container - image, port
+3. script
